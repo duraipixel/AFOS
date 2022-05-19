@@ -11,21 +11,29 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
-                            <label for="institute_name"> Institute Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="institute_name" name="institute_name"  required />
-                            
+                            <label for="name"> Institute Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ $info->name ?? '' }}"  required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="institute_code"> Institute Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="institute_code" name="institute_code" value="{{ $info->institute_code ?? '' }}" required />
                         </div>
                         
                         <div class="mb-3">
-                            <label for="locations">Location <span class="text-danger">*</span></label>
-                            <select name="locations" id="locations" required class="form-control">
+                            <label for="location_id ">Location <span class="text-danger">*</span></label>
+                            <select name="location_id" id="location_id" required class="form-control">
                                 <option value="">-- select --</option>
-                                <option value="sec">Section A</option>
+                                @if( isset( $location ) && !empty($location))
+                                    @foreach ($location as $item)
+                                        <option value="{{ $item->id }}" @if( isset( $info->location_id ) && $info->location_id == $item->id) selected @endif>{{ $item->location_name }}</option>
+                                    @endforeach
+                                @endif
+                                
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="name">Description </label>
-                            <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
+                            <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $info->description ?? '' }}</textarea>
                         </div>
                        
                     </div>
@@ -62,6 +70,7 @@
                         if( response.error == 0 ) {
                             toastr.success('Success', response.message);
                             $('#standard-modal').modal('hide');
+                            table.ajax.reload();
                         } else {
                             toastr.error('Error', response.message);
                         }

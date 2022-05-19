@@ -25,19 +25,23 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="mb-3">
-                            <label for="name">Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Admin" required />
-                            
+                            <label for="name">Role Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ $info->name ?? '' }}" required />
                         </div>
                     </div>
-                   
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="name">Role Description </label>
+                            <input type="text" class="form-control" id="description" name="description" value="{{ $info->description ?? '' }}" />
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
                         <table class="table table-striped table-bordered table-hover table-role" padding="0">
                             <thead>
                                 <tr>
-                                    <th rowspan="2"> Module </th>
+                                    <th rowspan="2" class="text-start px-3"> Module </th>
                                     <th> Visible </th>
                                     <th> Editable </th>
                                     <th> Delete </th>
@@ -64,21 +68,27 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $perms = [];
+                                    if( isset( $info->permissions ) && !empty($info->permissions)) {
+                                        $perms = unserialize($info->permissions);
+                                    }
+                                @endphp
                                 @if( config('constant.permission') )
                                     @foreach (config('constant.permission') as $item)
                                         <tr>
-                                            <td>
-                                                {{ $item }}
+                                            <td class="text-start px-3">
+                                                {{ ucwords( str_replace('-', " ",$item ) ); }}
                                                 <input type="hidden" name="item" value="{{$item??''}}">
                                             </td>
                                             <td>
-                                                <input type="checkbox" class="visible" name="{{$item}}_visible" id="{{$item}}_visible">
+                                                <input type="checkbox" class="visible" @if(isset( $perms[$item][$item.'_visible']) && $perms[$item][$item.'_visible'] == 'on') checked @endif name="{{$item}}_visible" id="{{$item}}_visible">
                                             </td>
                                             <td>    
-                                                <input type="checkbox" class="editable" name="{{$item}}_editable" id="{{$item}}_editable">
+                                                <input type="checkbox" class="editable" @if(isset( $perms[$item][$item.'_editable']) && $perms[$item][$item.'_editable'] == 'on') checked @endif name="{{$item}}_editable" id="{{$item}}_editable">
                                             </td>
                                             <td>
-                                                <input type="checkbox" class="delete" name="{{$item}}_delete" id="{{$item}}_delete">
+                                                <input type="checkbox" class="delete" @if(isset( $perms[$item][$item.'_delete']) && $perms[$item][$item.'_delete'] == 'on') checked @endif name="{{$item}}_delete" id="{{$item}}_delete">
                                             </td>
                                         </tr>
                                     @endforeach
@@ -141,6 +151,7 @@
                         if( response.error == 0 ) {
                             toastr.success('Success', response.message);
                             $('#standard-modal').modal('hide');
+                            table.ajax.reload();
                         } else {
                             toastr.error('Error', response.message);
                         }

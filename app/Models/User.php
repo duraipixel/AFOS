@@ -27,7 +27,8 @@ class User extends Authenticatable
         'user_no',
         'status',
         'added_by',
-        'is_super_admin'
+        'is_super_admin',
+        'role_id'
     ];
 
     /**
@@ -48,4 +49,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function scopeUser($query)
+    {
+        return $query->where('is_super_admin', 0);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
 }

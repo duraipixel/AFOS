@@ -16,30 +16,14 @@
                     <table class="table table-centered table-borderless table-hover w-100 dt-responsive nowrap" id="product-table">
                         <thead class="table-light">
                             <tr>
+                                <th>Image</th>
                                 <th>Product</th>
                                 <th>Category</th>
                                 <th> Price </th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <span class="fw-semibold">Meals</span>
-                                </td>
-                                <td>
-                                    Lunch
-                                </td>
-                                <td>
-                                    120.00
-                                </td>
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -67,10 +51,22 @@
 @endsection
 @section('add_on_script')
 <script>
-   
-    $('#product-table').DataTable();
+    var table = $('#product-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('products') }}",
+        columns: [
+            {data: 'image', name: 'image'},
+            {data: 'name', name: 'name'},
+            {data: 'category', name: 'category'},
+            {data: 'price', name: 'price'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+        order: [],
+    });
+    
     function add_modal(id='') {
-        var id = $(this).attr('data-id');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -88,7 +84,7 @@
 
     }
 
-    function delete_user(id) {
+    function delete_product(id) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -115,6 +111,7 @@
                                 'Your Data has been deleted.',
                                 'success'
                                 )
+                            table.ajax.reload();
                         }
                     }
                 });
@@ -123,7 +120,7 @@
         })
     }
 
-
+    
 
 </script>
 @endsection

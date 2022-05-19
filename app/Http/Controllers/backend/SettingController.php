@@ -31,7 +31,7 @@ class SettingController extends Controller
             'name' => 'required',
             'mobile_no' => 'required',
         ]);
-        $image = '';
+        $imageName = '';
         if ($validator->passes()) {
             if( $request->hasFile('image') ){
                 $imageName = time().'.'.$request->image->extension();  

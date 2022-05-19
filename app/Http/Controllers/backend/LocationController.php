@@ -18,8 +18,7 @@ class LocationController extends Controller
             $data = Location::all();
             return Datatables::of($data)->addIndexColumn()
                 ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0);" class="action-icon" onclick="return view_location('.$row->id.')"> <i class="mdi mdi-eye-outline"></i></a>
-                    <a href="javascript:void(0);" class="action-icon" onclick="return add_modal('.$row->id.')"> <i class="mdi mdi-square-edit-outline"></i></a>
+                    $btn = '<a href="javascript:void(0);" class="action-icon" onclick="return add_modal('.$row->id.')"> <i class="mdi mdi-square-edit-outline"></i></a>
                     <a href="javascript:void(0);" class="action-icon" onclick="return delete_location('.$row->id.')"> <i class="mdi mdi-delete"></i></a>';
                     return $btn;
                 })
@@ -29,25 +28,12 @@ class LocationController extends Controller
         return view('backend.location.index', compact('title'));
     }
 
-    public function ajax_list(Request $request) {
-        if ($request->ajax()) {
-            $data = Location::select('id', 'location_name', 'address', 'status')->get();
-            return Datatables::of($data)->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-    }
-
     public function add_edit_modal(Request $request) {
         $title = 'Add Locations';
         $id = $request->id;
         $info = '';
         if( isset( $id ) && !empty( $id ) ) {
+            $title = 'Update Locations';
             $info = Location::find($id);
         }
         return view('backend.location.add_edit', compact('title', 'info', 'id'));
@@ -82,4 +68,6 @@ class LocationController extends Controller
         $info->delete();
         echo 1;
     }
+
+    
 }

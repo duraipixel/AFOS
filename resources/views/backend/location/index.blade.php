@@ -18,7 +18,6 @@
                     <table class="table table-centered table-borderless table-hover w-100 dt-responsive nowrap" id="location-table">
                         <thead class="table-light">
                             <tr>
-                                <th>No</th>
                                 <th>Location</th>
                                 <th>Address</th>
                                 <th style="width: 75px;">Action</th>
@@ -59,7 +58,6 @@
         type: 'POST',
         ajax: "{{ route('locations') }}",
         columns: [
-            {data: 'id', name: 'id'},
 
             {data: 'location_name', name: 'location_name'},
             {data: 'address', name: 'address'},

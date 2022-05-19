@@ -20,25 +20,12 @@
                             <tr>
                                
                                 <th>Institute</th>
+                                <th>Code</th>
                                 <th>Location</th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <span class="fw-semibold">Engineering</span>
-                                </td>
-                                <td>
-                                    Section A
-                                </td>
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -67,9 +54,19 @@
 @section('add_on_script')
 <script>
    
-    $('#institutes-table').DataTable();
+    var table = $('#institutes-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('institutes') }}",
+        columns: [
+            {data: 'name', name: 'name'},
+            {data: 'institute_code', name: 'institute_code'},
+            {data: 'location', name: 'location'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
+    });
     function add_modal(id='') {
-        var id = $(this).attr('data-id');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -87,7 +84,7 @@
 
     }
 
-    function delete_user(id) {
+    function delete_institute(id) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -114,6 +111,7 @@
                                 'Your Data has been deleted.',
                                 'success'
                                 )
+                            table.ajax.reload();
                         }
                     }
                 });

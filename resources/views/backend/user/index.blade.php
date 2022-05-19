@@ -17,7 +17,6 @@
                     <table class="table table-centered table-borderless table-hover w-100 dt-responsive nowrap" id="user-table">
                         <thead class="table-light">
                             <tr>
-                               
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Mobile No</th>
@@ -25,28 +24,7 @@
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <span class="fw-semibold">128</span>
-                                </td>
-                                <td>
-                                    $128,250
-                                </td>
-                                <td>
-                                    07/07/2018
-                                </td>
-                                <td>
-                                    <div class="spark-chart" data-dataset="[25, 66, 41, 89, 63, 25, 44, 12, 36, 9, 54]"></div>
-                                </td>
-
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -74,10 +52,22 @@
 @endsection
 @section('add_on_script')
 <script>
-   
-    $('#user-table').DataTable();
+   var table = $('#user-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('users') }}",
+        columns: [
+            {data: 'name', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'mobile_no', name: 'mobile_no'},
+            {data: 'role', name: 'role'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+        order: [],
+    });
+    
     function add_modal(id='') {
-        var id = $(this).attr('data-id');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -122,6 +112,7 @@
                                 'Your Data has been deleted.',
                                 'success'
                                 )
+                            table.ajax.reload();
                         }
                     }
                 });

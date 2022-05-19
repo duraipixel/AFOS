@@ -23,24 +23,7 @@
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <span class="fw-semibold">Lunch</span>
-                                </td>
-                                <td>
-                                    05:00 AM
-                                </td>
-                                <td>
-                                    07:00 AM
-                                </td>
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -68,10 +51,21 @@
 @endsection
 @section('add_on_script')
 <script>
-   
-    $('#productcategory-table').DataTable();
+    var table = $('#productcategory-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('product-category') }}",
+        columns: [
+            {data: 'categories', name: 'categories'},
+            {data: 'cutoff_start_time', name: 'cutoff_start_time'},
+            {data: 'cutoff_end_time', name: 'cutoff_end_time'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+        order: [],
+    });
+    
     function add_modal(id='') {
-        var id = $(this).attr('data-id');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -89,7 +83,7 @@
 
     }
 
-    function delete_user(id) {
+    function delete_category(id) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -116,6 +110,7 @@
                                 'Your Data has been deleted.',
                                 'success'
                                 )
+                            table.ajax.reload();
                         }
                     }
                 });

@@ -17,33 +17,11 @@
                                 <th>Institute</th>
                                 <th>Grade</th>
                                 <th>Parents</th>
+                                <th>Contact No</th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Kanish</td>
-                                <td>876543</td>
-                                <td>
-                                    <span class="fw-semibold">12</span>
-                                </td>
-                                <td>
-                                    School
-                                </td>
-                                <td>
-                                    A
-                                </td>
-                                <td>
-                                    Parents
-                                </td>
-
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -65,23 +43,38 @@
       <!-- demo app -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
-
       <!-- end demo js-->
-
 @endsection
 @section('add_on_script')
 <script>
-   
-    $('#student-table').DataTable();
-    function add_modal(id='') {
-        var id = $(this).attr('data-id');
+    
+    var table = $('#student-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('students') }}",
+        columns: [
+            {data: 'name', name: 'name'},
+            {data: 'register_no', name: 'email'},
+            {data: 'section', name: 'section'},
+            {data: 'institute', name: 'institute'},
+            {data: 'standard', name: 'standard'},
+            {data: 'parents_name', name: 'parents_name'},
+            {data: 'contact_no', name: 'contact_no'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+        order: [],
+    });
+
+    function view_modal(id) {
+        
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         $.ajax({
-            url: "{{ route('users.add_edit') }}",
+            url: "{{ route('students.view') }}",
             type: "POST",
             data: {id:id},
             success:function(response) {
@@ -89,45 +82,7 @@
                $('#standard-modal').modal('show');
             }
         });
-
     }
-
-    function delete_user(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    url: "{{ route('users.delete') }}",
-                    type: "POST",
-                    data: {id:id},
-                    success:function(res){
-                        if( res ) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Your Data has been deleted.',
-                                'success'
-                                )
-                        }
-                    }
-                });
-                
-            }
-        })
-    }
-
-
 
 </script>
 @endsection

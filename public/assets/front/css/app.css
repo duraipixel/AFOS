@@ -11959,7 +11959,7 @@ body {
 }
 
 .option_card .form-control {
-  border: 1px solid #289BD5 !important;
+  border: 1px solid #289BD5;
   background: white;
 }
 

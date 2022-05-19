@@ -8,32 +8,21 @@
             <div class="card-body">
                 <div class="row mb-2">
                     <div class="col-sm-12 text-end">
-                        <a href="javascript:void(0);" class="btn btn-primary mb-2" onclick="return add_modal()" id="add-user" data-id="3">
+                        <a href="javascript:void(0);" class="btn btn-primary mb-2" onclick="return add_modal()" >
                             <i class="mdi mdi-plus-circle me-2"></i> Add Role</a>
                     </div>
-                   
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-centered table-borderless table-hover w-100 dt-responsive nowrap" id="user-table">
+                    <table class="table table-centered table-borderless table-hover w-100 dt-responsive nowrap" id="role-table">
                         <thead class="table-light">
                             <tr>
                                 <th>Role</th>
+                                <th> Description </th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <span class="fw-semibold">128</span>
-                                </td>
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
-                                    <a href="javascript:void(0);" class="action-icon" onclick="return delete_user(1)"> <i class="mdi mdi-delete"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -62,9 +51,18 @@
 @section('add_on_script')
 <script>
    
-    $('#user-table').DataTable();
+    var table = $('#role-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('roles') }}",
+        columns: [
+            {data: 'name', name: 'name'},
+            {data: 'description', name: 'description'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
+    });
     function add_modal(id='') {
-        var id = $(this).attr('data-id');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -82,7 +80,7 @@
 
     }
 
-    function delete_user(id) {
+    function delete_institute(id) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -109,6 +107,7 @@
                                 'Your Data has been deleted.',
                                 'success'
                                 )
+                            table.ajax.reload();
                         }
                     }
                 });
