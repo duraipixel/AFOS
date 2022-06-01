@@ -5,15 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Institution;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Transaction;
 use Validator;
 use Auth;
+use Carbon\Carbon;
+use DB;
+use Razorpay\Api\Api;
+use Exception;
+
+use PDF;
+use Illuminate\Support\Facades\Storage;
+
+
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $institution = Institution::all();
+        
+        $institution = Institution::where('status', 1 )->get();
         $info = '';
         if(session()->get('order') ) {
             $session = session()->get('order');
@@ -25,8 +39,14 @@ class OrderController extends Controller
     }
 
     public function get_food_info() {
-        $product_info = Product::all();
-        return view('front_end.wizard.food.index', compact('product_info'));
+        if( session()->get('order')) {
+
+            // DB::enableQueryLog();
+            $items = ProductCategory::with('products')->cutoff()->orderBy('order')->where('status', 1)->get();
+            // dd(DB::getQueryLog());
+            return view('front_end.wizard.food.index', compact('items'));
+        } 
+        abort(404);
     }
 
     public function order_info(Request $request ) {
@@ -144,6 +164,7 @@ class OrderController extends Controller
     public function order_list(Request $request) {
         if( session()->get('order')) {
             $session = session()->get('order');
+            
             $order_items = $session['product_id'];
             $items = Product::whereIn('id', $order_items)->get();
             
@@ -154,5 +175,145 @@ class OrderController extends Controller
 
     public function confirm_payment(Request $request) {
         
+        $payee_name = $request->payee_name;
+        $payee_contact = $request->mobile_no;
+        if( session()->get('order')) {
+            $session = session()->get('order');
+
+            $order_items = $session['product_id'];
+            $items = Product::selectRaw('sum(price) as price')->whereIn('id', $order_items)->first();
+
+            $student_id = $session['student_id'];
+            $item_all = Product::whereIn('id', $order_items)->get();
+
+            //insert in 
+            $stu_info = Student::find($student_id);
+            $ins['order_no'] = order_no();
+            $ins['payer_name'] = $payee_name;
+            $ins['payer_mobile_no'] = $payee_contact;
+            $ins['student_id'] = $student_id;
+            $ins['institute_id'] = $stu_info->institute_id;
+            $ins['total_price'] = $items->price;
+            $ins['status']      = 2;
+
+            $order_id = Order::create($ins)->id;
+                
+            if( isset( $item_all ) && !empty( $item_all )) {
+                foreach ($item_all as $its) {
+                    $itins['order_id'] = $order_id;
+                    $itins['product_id'] = $its->id;
+                    $itins['price'] = $its->price;
+
+                    OrderItem::create($itins);
+                }
+            }
+            $amount = $items->price * 100;
+            // $amount = 1 * 100;
+            //insert in payment
+            $pay['order_id']        = $order_id;
+            $pay['transaction_no']  = 'TNX'.date('hisdmy');
+            $pay['amount']          = $items->price;
+            // $pay['response']        = serialize($response);
+
+            $payment_id             = Transaction::create($pay)->id;
+
+            $session['payment_id'] = $payment_id;
+            $session['amount'] = $items->price;
+           
+            session()->put('order', $session);
+
+            $params =array(
+                'amount' => $amount, 
+                'buttontext' => 'Pay '.$items->price.' INR', 
+                'name' => 'Amalorpavam Lourds Academy', 
+                'payee_name' => $payee_name,
+                'payee_mobile' => $payee_contact,
+                'original_amount' => $items->price,
+            );
+            return view('front_end.wizard.confirm.pre_confirmation', $params);
+        }
+        abort(404);
+    }
+
+    public function final_process(Request $request) {
+        $input = $request->all();
+  
+        $api = new Api(env('RAZOR_KEY'), env('RAZOR_SECRET'));
+  
+        $payment = $api->payment->fetch($input['razorpay_payment_id']);
+        
+        if( session()->get('order')) {
+            $session = session()->get('order');
+            
+            $payment_id = $session['payment_id'];
+            $pay_info = Transaction::find($payment_id);
+            $order = Order::find($pay_info->order_id);
+            
+            if(count($input)  && !empty($input['razorpay_payment_id'])) {
+                try {
+                    $response = $api->payment->fetch($input['razorpay_payment_id'])->capture(array('amount'=>$payment['amount'])); 
+                    
+                    $pay_info->response = serialize($response);
+                    $pay_info->payment_status = 'success';
+                    $pay_info->update();
+
+                    $order->status = 1;
+                    $order->update();
+                    // session()->forget('order');
+
+                } catch (Exception $e) {
+
+                    $pay_info->response = serialize($e->getMessage());
+                    $pay_info->payment_status = 'failed';
+                    $pay_info->update();
+
+                    $order->status = 4; ///faild payment
+                    $order->update();
+                    session()->forget('order');
+                    
+                    \Flash::info($e->getMessage());
+                    return redirect()->route('fail.page');
+                }
+            }
+            session()->put('success_pay_id', $payment_id);
+            return redirect()->route('success.page');
+        } 
+        abort(404);        
+    }
+
+    public function success_page(Request $request) {
+
+        if( session()->flash('pay_success')) {
+            if( session()->get('success_pay_id')){
+                $paymet_id = session()->get('success_pay_id');
+                $payment_info = 
+                session()->forget('success_pay_id');
+            }
+        }
+
+        if( session()->get('order')) {
+            
+            $paymet_id = session()->get('order')['payment_id'];
+            $info = Transaction::find($paymet_id);
+            
+            $pdf = PDF::loadView('front_end.invoice.order_invoice', compact('info'));    
+            Storage::put('public/invoice_order/'.$info->order->order_no.'.pdf', $pdf->output());
+            session()->forget('order');
+            return view('front_end.wizard.confirm._pay_success', ['info' => $info ?? '']);
+        }
+        abort(404);
+
+    }
+
+    public function fail_page(Request $request) {
+        return view('front_end.wizard.confirm._pay_fail');
+    }
+
+    public function generatePDF()
+    {
+        $info  = Transaction::find(22);
+        $pdf = PDF::loadView('front_end.invoice.order_invoice', compact('info'));    
+        Storage::put('public/invoice_order/invoice1.pdf', $pdf->output());    
+        // return $pdf->download('test.pdf');1
     }
 }

@@ -45,11 +45,13 @@
             processData: false,
             beforeSend:function(){
                 $('#select_food').attr('disabled', true);
+                $('#loading').show();
             },
             success: function(response) {
                 $('#select_food').attr('disabled', false);
                 
                 if( response.error == 1 ){
+                    $('#loading').hide();
                     $('#error_msg').show();
                     $('#error_msg').html('Atleast one food need to select');
                     $('#error_msg').fadeOut(5000);

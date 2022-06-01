@@ -12,8 +12,8 @@
                     <div class="email-menu-list mt-3">
                         <a href="#" id="myaccount" class="list-group-item p-2 bg-light"><i class="dripicons-user  font-18 align-middle me-2"></i>My Account</a>
                         {{-- <a href="#" id="email" class="list-group-item p-2"><i class="mdi mdi-google-drive font-18 align-middle me-2"></i> Email </a> --}}
-                        <a href="#" id="sms" class="list-group-item p-2"><i class="mdi mdi-dropbox font-18 align-middle me-2"></i> SMS </a>
-                        <a href="#" id="payment" class="list-group-item p-2"><i class="mdi mdi-dropbox font-18 align-middle me-2"></i> Payment </a>
+                        {{-- <a href="#" id="sms" class="list-group-item p-2"><i class="mdi mdi-dropbox font-18 align-middle me-2"></i> SMS </a> --}}
+                        {{-- <a href="#" id="payment" class="list-group-item p-2"><i class="mdi mdi-dropbox font-18 align-middle me-2"></i> Payment </a> --}}
                         <a href="#" id="global" class="list-group-item p-2"><i class="dripicons-gear  font-18 align-middle me-2"></i>Global Settings</a>
                         <a href="#" id="password" class="list-group-item p-2"><i class="dripicons-gear  font-18 align-middle me-2"></i>Change Password</a>
                     </div>

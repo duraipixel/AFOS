@@ -21,12 +21,20 @@ class InstituteController extends Controller
                 ->addColumn('location', function($row){
                     return $row->location->location_name;
                 })
+                ->addColumn('status', function($row){
+                    if( $row->status == 1){
+                        $status = '<a href="javascript:void(0);" class="btn btn-success btn-sm" tooltip="Click to Inactive" onclick="return change_status('.$row->id.', 2)">Active</a>';
+                    } else {
+                        $status = '<a href="javascript:void(0);" class="btn btn-danger btn-sm" tooltip="Click to Active" onclick="return change_status('.$row->id.', 1)">Inactive</a>';
+                    }
+                    return $status;
+                })
                 ->addColumn('action', function($row){
                     $btn = '<a href="javascript:void(0);" class="action-icon" onclick="return add_modal('.$row->id.')"> <i class="mdi mdi-square-edit-outline"></i></a>
                     <a href="javascript:void(0);" class="action-icon" onclick="return delete_institute('.$row->id.')"> <i class="mdi mdi-delete"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['location','action'])
+                ->rawColumns(['status','location','action'])
                 
                 ->make(true);
         }
@@ -35,7 +43,7 @@ class InstituteController extends Controller
 
     public function add_edit_modal(Request $request) {
         $title = 'Add Institute';
-        $location = Location::all();
+        $location = Location::where('status', 1)->get();
         $id = $request->id;
         $info = '';
         if( isset( $id ) && !empty($id) ) {
@@ -76,6 +84,15 @@ class InstituteController extends Controller
         $id = $request->id;
         $info = Institution::find($id);
         $info->delete();
+        echo 1;
+    }
+
+    public function change_status(Request $request) {
+        $id = $request->id;
+        $status = $request->status;
+        $info = Institution::find($id);
+        $info->status = $status;
+        $info->update();
         echo 1;
     }
 }

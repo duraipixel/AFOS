@@ -16,7 +16,7 @@
             <img src="{{ asset('assets/images/afos/logo.png') }}" alt="" height="16">
         </span>
         <span class="logo-sm">
-            <img src="{{ asset('assets/images/afos/log.png') }}" alt="" height="16">
+            <img src="{{ asset('assets/images/afos/logo.png') }}" alt="" height="16">
         </span>
     </a>
 
@@ -40,13 +40,13 @@
                 <div class="collapse" id="sidebarTasks">
                     <ul class="side-nav-second-level">
                         <li>
-                            <a href="{{ route('location-wise-reports') }}">Institution & Location wise</a>
+                            <a href="{{ route('reports.location.wise') }}">Institution & Location wise</a>
                         </li>
                         <li>
-                            <a href="{{ route('class-wise-reports') }}">Class wise</a>
+                            <a href="{{ route('reports.class.wise') }}">Class wise</a>
                         </li>
                         <li>
-                            <a href="{{ route('food-type-reports')}}">Food Type</a>
+                            <a href="{{ route('reports.food.type')}}">Food Type</a>
                         </li>
                     </ul>
                 </div>
@@ -133,7 +133,7 @@
                             <a href="{{ route('settings') }}">Site Settings</a>
                         </li>
                         <li>
-                            <a href="{{ route('student-imports') }}">Import Students</a>
+                            <a href="{{ route('students.imports') }}">Import Students</a>
                         </li>
                     </ul>
                 </div>

@@ -26,10 +26,11 @@
             contentType: false,
             processData: false,
             beforeSend:function(){
-                
+                $('#loading').show();
             },
             success: function(response) {
                 if( response ){
+                    $('#loading').hide();
                     window.location.href="{{ route('online.food') }}";
                 }
             }            

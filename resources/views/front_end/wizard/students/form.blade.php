@@ -97,8 +97,11 @@
                 processData: false,
                 beforeSend:function(){
                     $('#save').attr('disabled', true);
+                    $('#loading').show();
                 },
                 success: function(response) {
+                    $('#loading').hide();
+
                     $('#save').attr('disabled', false);
                     console.log( response );
                     if( response.error == 0 ) {

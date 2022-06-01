@@ -18,8 +18,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Category</th>
+                                <th>Order</th>
                                 <th> CutOff Start Time</th>
                                 <th> CutOff End Time</th>
+                                <th> Status</th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
@@ -58,8 +60,10 @@
         ajax: "{{ route('product-category') }}",
         columns: [
             {data: 'categories', name: 'categories'},
+            {data: 'order', name: 'order'},
             {data: 'cutoff_start_time', name: 'cutoff_start_time'},
             {data: 'cutoff_end_time', name: 'cutoff_end_time'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         order: [],
@@ -108,6 +112,42 @@
                             Swal.fire(
                                 'Deleted!',
                                 'Your Data has been deleted.',
+                                'success'
+                                )
+                            table.ajax.reload();
+                        }
+                    }
+                });
+                
+            }
+        })
+    }
+
+    function change_status(id, status) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You can be able to change again!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('product-category.status') }}",
+                    type: "POST",
+                    data: {id:id, status:status},
+                    success:function(res){
+                        if( res ) {
+                            Swal.fire(
+                                'Changed!',
+                                'Your Product Category status has been changed.',
                                 'success'
                                 )
                             table.ajax.reload();

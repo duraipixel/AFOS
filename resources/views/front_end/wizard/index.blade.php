@@ -6,16 +6,43 @@
         .error {
             border:1px solid red !important;
         }
+
+        #loading {
+            position: fixed;
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            text-align: center;
+            opacity: 0.7;
+            background-color: #fff;
+            z-index: 99;
+        }
+
+        #loading-image {
+            position: absolute;
+            top: 10%;
+            left: 26%;
+            z-index: 100;
+        }
     </style>
     <div class="col-lg-8 mx-auto"></div>
-    @include('front_end.wizard.common._wizard_route')
+        @include('front_end.wizard.common._wizard_route')
     </div>
     <!--========= End : Wizard Header ======-->
     <div class="menu">
         @yield('wizard_content')
     </div>
+
+    <div id="loading" >
+        <img id="loading-image" src="https://flevix.com/wp-content/uploads/2019/12/Barline-Loading-Images-1.gif" alt="Loading..." />
+    </div>
 </main>
 <script>
+    $(window).on('load', function () {
+        $('#loading').hide();
+    })
     $(document).on("input", ".price", function() {
     this.value = this.value.match(/^\d+\.?\d{0,2}/);});
 
@@ -43,14 +70,19 @@
                 $.ajax({
                     url: "{{ route('order.student.change') }}",
                     type: 'POST',
+                    beforeSend: function(){
+                        $('#loading').show();
+                    },
                     success: function(response) {
                         if( response ){
                             Swal.fire(
                             'Changed!',
                             'Your Data has been cleared.',
                             'success'
-                            )
+                            );
                             setTimeout(() => {
+                                $('#loading').hide();
+
                                 window.location.href="{{ route('online.student') }}" 
                             }, 2000);
                             

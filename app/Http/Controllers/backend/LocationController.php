@@ -17,12 +17,20 @@ class LocationController extends Controller
         if ($request->ajax()) {
             $data = Location::all();
             return Datatables::of($data)->addIndexColumn()
+                ->addColumn('status', function($row){
+                    if( $row->status == 1){
+                        $status = '<a href="javascript:void(0);" class="btn btn-success btn-sm" tooltip="Click to Inactive" onclick="return change_status('.$row->id.', 2)">Active</a>';
+                    } else {
+                        $status = '<a href="javascript:void(0);" class="btn btn-danger btn-sm" tooltip="Click to Active" onclick="return change_status('.$row->id.', 1)">Inactive</a>';
+                    }
+                    return $status;
+                })
                 ->addColumn('action', function($row){
                     $btn = '<a href="javascript:void(0);" class="action-icon" onclick="return add_modal('.$row->id.')"> <i class="mdi mdi-square-edit-outline"></i></a>
                     <a href="javascript:void(0);" class="action-icon" onclick="return delete_location('.$row->id.')"> <i class="mdi mdi-delete"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'status'])
                 ->make(true);
         }
         return view('backend.location.index', compact('title'));
@@ -66,6 +74,15 @@ class LocationController extends Controller
 
         $info = Location::find($id);
         $info->delete();
+        echo 1;
+    }
+
+    public function change_status(Request $request) {
+        $id = $request->id;
+        $status = $request->status;
+        $info = Location::find($id);
+        $info->status = $status;
+        $info->update();
         echo 1;
     }
 

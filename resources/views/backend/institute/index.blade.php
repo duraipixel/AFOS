@@ -22,6 +22,7 @@
                                 <th>Institute</th>
                                 <th>Code</th>
                                 <th>Location</th>
+                                <th> Status </th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
@@ -63,6 +64,7 @@
             {data: 'name', name: 'name'},
             {data: 'institute_code', name: 'institute_code'},
             {data: 'location', name: 'location'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
@@ -109,6 +111,42 @@
                             Swal.fire(
                                 'Deleted!',
                                 'Your Data has been deleted.',
+                                'success'
+                                )
+                            table.ajax.reload();
+                        }
+                    }
+                });
+                
+            }
+        })
+    }
+
+    function change_status(id, status) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You can be able to change again!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('institutes.status') }}",
+                    type: "POST",
+                    data: {id:id, status:status},
+                    success:function(res){
+                        if( res ) {
+                            Swal.fire(
+                                'Changed!',
+                                'Your Institute status has been changed.',
                                 'success'
                                 )
                             table.ajax.reload();

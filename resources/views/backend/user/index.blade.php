@@ -21,6 +21,7 @@
                                 <th>Email</th>
                                 <th>Mobile No</th>
                                 <th>Role</th>
+                                <th>Status</th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
@@ -62,6 +63,7 @@
             {data: 'email', name: 'email'},
             {data: 'mobile_no', name: 'mobile_no'},
             {data: 'role', name: 'role'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         order: [],
@@ -110,6 +112,42 @@
                             Swal.fire(
                                 'Deleted!',
                                 'Your Data has been deleted.',
+                                'success'
+                                )
+                            table.ajax.reload();
+                        }
+                    }
+                });
+                
+            }
+        })
+    }
+
+    function change_status(id, status) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You can be able to change again!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('users.status') }}",
+                    type: "POST",
+                    data: {id:id, status:status},
+                    success:function(res){
+                        if( res ) {
+                            Swal.fire(
+                                'Changed!',
+                                'Your User status has been changed.',
                                 'success'
                                 )
                             table.ajax.reload();

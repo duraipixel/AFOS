@@ -17,7 +17,7 @@
                                 <input type="radio" name="some" class="form-check-input" id="Order_Food_online">
                                 Order Food Online
                             </label>
-                            <a href="{{ route('online.food') }}">
+                            <a href="{{ route('online.student') }}">
                                 <input type="submit" value="Proceed" class="w-100 btn btn-primary">
                             </a>
                         </div>

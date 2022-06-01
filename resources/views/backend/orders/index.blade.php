@@ -12,33 +12,16 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Date</th>
-                                <th>Transaction No</th>
-                                <th>Amount</th>
+                                <th> Register No </th>
+                                <th> Board </th>
+                                <th> Student </th>
                                 <th>Order No</th>
-                                <th>Payment Status</th>
+                                <th>Amount</th>
+                                <th>Status</th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>12-03-2022 12:00 AM</td>
-                                <td>7654322</td>
-                                <td>
-                                    789.00
-                                </td>
-                                <td>
-                                    Ord9090
-                                </td>
-                                <td>
-                                    Paid
-                                </td>
-
-                                <td>
-                                    <a href="javascript:void(0);" class="action-icon"> <i class="mdi mdi-eye"></i></a>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div> <!-- end card-body-->
@@ -67,7 +50,42 @@
 @section('add_on_script')
 <script>
    
-    $('#order-table').DataTable();
+   var table = $('#order-table').DataTable({
+        processing: true,
+        serverSide: true,
+        type: 'POST',
+        ajax: "{{ route('orders') }}",
+        columns: [
+            {data: 'date', name: 'date'},
+            {data: 'register_no', name: 'register_no'},
+            {data: 'board', name: 'board'},
+            {data: 'student', name: 'student'},
+            {data: 'order_no', name: 'order_no'},
+            {data: 'total_price', name: 'amount'},
+            {data: 'status', name: 'status'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+        order: [],
+    });
+
+    function view_modal(id) {
+        
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('orders.view') }}",
+            type: "POST",
+            data: {id:id},
+            success:function(response) {
+                
+               $('#standard-modal').html(response);
+               $('#standard-modal').modal('show');
+            }
+        });
+    }
 
 </script>
 @endsection

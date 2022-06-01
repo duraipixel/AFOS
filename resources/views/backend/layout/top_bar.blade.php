@@ -11,7 +11,7 @@
             </div>
         </li>
 
-        <li class="dropdown notification-list">
+        {{-- <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="dripicons-bell noti-icon"></i>
                 <span class="noti-icon-badge"></span>
@@ -98,7 +98,7 @@
                 </a>
 
             </div>
-        </li>
+        </li> --}}
 
         <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
@@ -118,13 +118,7 @@
                 </div>
 
                 <!-- item-->
-                <a href="javascript:void(0);" class="dropdown-item notify-item">
-                    <i class="mdi mdi-account-circle me-1"></i>
-                    <span>My Account</span>
-                </a>
-
-                <!-- item-->
-                <a href="javascript:void(0);" class="dropdown-item notify-item">
+                <a href="{{ route('settings') }}" class="dropdown-item notify-item">
                     <i class="mdi mdi-account-edit me-1"></i>
                     <span>Settings</span>
                 </a>
@@ -147,7 +141,7 @@
     <button class="button-menu-mobile open-left">
         <i class="mdi mdi-menu"></i>
     </button>
-    <div class="app-search dropdown d-none d-lg-block">
+    {{-- <div class="app-search dropdown d-none d-lg-block">
         <form>
             <div class="input-group">
                 <input type="text" class="form-control dropdown-toggle"  placeholder="Search..." id="top-search">
@@ -209,5 +203,5 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>

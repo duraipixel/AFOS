@@ -1,7 +1,5 @@
 @extends('backend.layout.template')
 @section('content')
-
-
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -10,7 +8,7 @@
                     <div class="col-sm-12 text-start">
                         <div class="row">
                             <div class="col-8">
-                                <form id="importform" method="POST" action="{{ route('student.do.imports')}}" enctype="multipart/form-data">
+                                <form id="importform" method="POST" action="{{ route('students.do.imports')}}" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
                                         <div class="col-6">
@@ -23,7 +21,6 @@
                                             <button type="submit" class="btn btn-primary mb-2">Import</button>
                                         </div>
                                     </div>
-                                    
                                 </form>
                             </div>
                             <div class="col-4">
@@ -35,13 +32,10 @@
                         </div>
                     </div>
                 </div>
-              
             </div> <!-- end card-body-->
         </div> <!-- end card-->
     </div> <!-- end col -->
 </div>
-
-
 @endsection
 @section('third_party_js')
      <!-- third party js -->

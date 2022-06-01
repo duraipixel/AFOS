@@ -18,7 +18,7 @@
                 <div class="row justify-content-center">
                     <div class="col-xxl-4 col-lg-5">
                         <div class="card">
-
+                           
                             <!-- Logo -->
                             <div class="card-header pt-4 pb-4 text-center bg-white">
                                 <a href="{{ url('/') }}">
@@ -27,12 +27,20 @@
                             </div>
 
                             <div class="card-body p-4">
-                                
+                                <div>
+                                    @if($errors->any())
+                                    <div class="alert alert-danger">
+                                        @foreach ($errors->all() as $error)
+                                        {{ $error }}
+                                    @endforeach
+                                    </div>
+                                @endif
+                                </div>
                                 <div class="text-center w-75 m-auto">
                                     <h4 class="text-dark-50 text-center pb-0 fw-bold">Sign In</h4>
                                 </div>
 
-                                <form method="POST" action="{{ route('login') }}">
+                                <form method="POST" action="{{ route('login.submit') }}">
                                     @csrf
 
                                     <div class="mb-3">

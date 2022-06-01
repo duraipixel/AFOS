@@ -15,16 +15,22 @@
                             <input type="text" class="form-control" id="category" name="category" value="{{ $info->categories ?? '' }}" required />
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="mb-3">
                             <label for="cutoff_start_time"> Cutoff Start Time <span class="text-danger">*</span></label>
                             <input type="time" class="form-control" id="cutoff_start_time" name="cutoff_start_time" value="{{ $info->cutoff_start_time ?? '' }}" required />
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="mb-3">
                             <label for="cutoff_end_time"> Cutoff End Time  <span class="text-danger">*</span></label>
                             <input type="time" class="form-control" id="cutoff_end_time" name="cutoff_end_time" value="{{ $info->cutoff_end_time ?? '' }}" required />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-3">
+                            <label for="order"> Order <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="order" name="order" min="1" value="{{ $info->order ?? '' }}" required />
                         </div>
                     </div>
                     <div class="col-12">

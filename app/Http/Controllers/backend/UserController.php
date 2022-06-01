@@ -20,6 +20,14 @@ class UserController extends Controller
             $data = User::with('role')->user()->latest()->get();
             
             return Datatables::of($data)->addIndexColumn()
+                ->addColumn('status', function($row){
+                    if( $row->status == 1){
+                        $status = '<a href="javascript:void(0);" class="btn btn-success btn-sm" tooltip="Click to Inactive" onclick="return change_status('.$row->id.', 2)">Active</a>';
+                    } else {
+                        $status = '<a href="javascript:void(0);" class="btn btn-danger btn-sm" tooltip="Click to Active" onclick="return change_status('.$row->id.', 1)">Inactive</a>';
+                    }
+                    return $status;
+                })
                 ->addColumn('role', function($row){
                     return $row->role->name ?? '';
                 })
@@ -28,7 +36,7 @@ class UserController extends Controller
                     <a href="javascript:void(0);" class="action-icon" onclick="return delete_user('.$row->id.')"> <i class="mdi mdi-delete"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['role','action'])
+                ->rawColumns(['role','action', 'status'])
                 ->make(true);
         }
         return view('backend.user.index', compact('title'));
@@ -38,7 +46,7 @@ class UserController extends Controller
         $title = 'Add Users';
         $id = $request->id;
         $info = '';
-        $role = Role::all();
+        $role = Role::where('status', 1)->get();
         if( isset( $id ) && !empty($id)) {
             $title = 'Update Users';
             $info = User::find($id);
@@ -87,6 +95,15 @@ class UserController extends Controller
         $id = $request->id;
         $info = User::find($id);
         $info->delete();
+        echo 1;
+    }
+
+    public function change_status(Request $request) {
+        $id = $request->id;
+        $status = $request->status;
+        $info = User::find($id);
+        $info->status = $status;
+        $info->update();
         echo 1;
     }
 }

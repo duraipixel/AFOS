@@ -25,4 +25,9 @@ class Student extends Model
     {
         return $this->belongsTo(Institution::class, 'institute_id', 'id');
     }
+
+    public function school()
+    {
+        return $this->hasOne(Institution::class, 'institute_id', 'id');
+    }
 }

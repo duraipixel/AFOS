@@ -18,6 +18,19 @@ class ProductCategory extends Model implements Auditable
         'description',
         'cutoff_start_time',
         'cutoff_end_time',
+        'order',
         'status'
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'category_id', 'id')->where('status', 1);
+    }
+
+    public function scopeCutoff($query){
+        $time = date('H:i:s');
+        return $query->where('cutoff_start_time', '<=', $time )->where('cutoff_end_time', '>=', $time );
+
+
+    }
 }

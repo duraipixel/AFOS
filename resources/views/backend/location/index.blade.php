@@ -20,6 +20,7 @@
                             <tr>
                                 <th>Location</th>
                                 <th>Address</th>
+                                <th>Status</th>
                                 <th style="width: 75px;">Action</th>
                             </tr>
                         </thead>
@@ -61,6 +62,7 @@
 
             {data: 'location_name', name: 'location_name'},
             {data: 'address', name: 'address'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
@@ -131,6 +133,42 @@
                                 'success'
                                 )
                                 table.ajax.reload();
+                        }
+                    }
+                });
+                
+            }
+        })
+    }
+
+    function change_status(id, status) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You can be able to change again!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('locations.status') }}",
+                    type: "POST",
+                    data: {id:id, status:status},
+                    success:function(res){
+                        if( res ) {
+                            Swal.fire(
+                                'Changed!',
+                                'Your Location status has been changed.',
+                                'success'
+                                )
+                            table.ajax.reload();
                         }
                     }
                 });
